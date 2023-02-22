@@ -21,9 +21,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          sudo apt update -y
+          sudo apt-get update -y
           sudo apt-get install awscli -y
           git clone https://github.com/KunalTi/InNews.git
           cd InNews
-          aws lambda update-function-code \
+          sudo aws lambda update-function-code \
             --function-name my-function
