@@ -22,7 +22,7 @@ jobs:
       - name: Deploy Lambda function
         run: |
           # Create a ZIP file of the Lambda function code
-          zip -r lambda_function.zip lambda_function.py
+          zip -r lambda_function.zip . -i lambda_function.py
 
           # Deploy the ZIP file to the Lambda function
           aws lambda update-function-code \
