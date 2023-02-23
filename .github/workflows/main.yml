@@ -23,11 +23,16 @@ jobs:
     - name: Package Lambda function
       run: zip -r9 $ZIP_FILE_NAME .
 
-    - name: Deploy to Lambda
-      uses: aws-actions/aws-cli@v1
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        args: >
-          lambda update-function-code 
-          --function-name $LAMBDA_FUNCTION_NAME 
-          --zip-file fileb://$ZIP_FILE_NAME
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Deploy to Lambda
+      run: |
+        aws lambda update-function-code \
+          --function-name $LAMBDA_FUNCTION_NAME \
+          --zip-file fileb://$ZIP_FILE_NAME \
           --region $AWS_REGION
