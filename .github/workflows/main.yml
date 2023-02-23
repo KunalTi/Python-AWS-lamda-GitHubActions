@@ -1,29 +1,33 @@
-name: Deploy to AWS Lambda
+name: Deploy Lambda Function
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  LAMBDA_FUNCTION_NAME: my-lambda-function
+  ZIP_FILE_NAME: lambda_function.zip
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      
-      - name: Setup Python environment
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      
-      - name: Deploy to AWS Lambda
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install awscli -y
-          git clone https://github.com/KunalTi/InNews.git
-          cd InNews
-          sudo aws lambda update-function-code \
-            --function-name my-function
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt -t .
+
+    - name: Package Lambda function
+      run: zip -r9 $ZIP_FILE_NAME .
+
+    - name: Deploy to Lambda
+      uses: aws-actions/aws-cli@v1
+      with:
+        args: >
+          lambda update-function-code 
+          --function-name $LAMBDA_FUNCTION_NAME 
+          --zip-file fileb://$ZIP_FILE_NAME
+          --region $AWS_REGION
