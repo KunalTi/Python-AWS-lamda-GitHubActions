@@ -26,5 +26,5 @@ jobs:
 
           # Deploy the ZIP file to the Lambda function
           aws lambda update-function-code \
-            --function-name <your-lambda-function-name> \
+            --function-name tesy \
             --zip-file fileb://lambda_function.zip
